@@ -31,12 +31,19 @@
 
 nav a{
     margin:0 14px;
-    color:#fff;
+    color:#888888;  /* Abu-abu untuk menu tidak aktif */
     text-decoration:none;
     font-weight:500;
+    transition: color 0.3s ease;
 }
 
+/* Menu yang aktif/diklik (putih) */
 nav a.active{
+    color:#ffffff;  /* Putih untuk menu aktif */
+}
+
+/* Hover effect */
+nav a:hover{
     color:#ffffff;
 }
 
