@@ -1,185 +1,343 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Sistem Pakar</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <title>Diagram Tree | Sistem Pakar</title>
+    
+    <!-- Mengambil Font Modern dari Google Fonts (Poppins & Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Mengambil Icon library (FontAwesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 1. VARIABEL CSS (Konsisten dengan halaman lain) --- */
+        :root {
+            --primary-color: #4F46E5; /* Indigo Modern */
+            --secondary-color: #1E1B4B; /* Dark Text */
+            --accent-color: #818CF8;
+            --bg-color: #F8FAFC; 
+            --card-bg: #FFFFFF; 
+            --text-gray: #64748B;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- 2. RESET DASAR --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; color: var(--secondary-color); }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- 3. HEADER / NAVBAR --- */
+        header {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links { display: flex; gap: 25px; }
+        
+        /* Menu normal (abu-abu) */
+        .nav-links a { 
+            font-weight: 500; 
+            font-size: 0.95rem; 
+            color: #9CA3AF; /* Abu-abu untuk menu tidak aktif */
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover effect */
+        .nav-links a:hover { 
+            color: var(--primary-color); 
+        }
+
+        /* Menu yang aktif (highlight berwarna) */
+        .nav-links a.active { 
+            color: var(--primary-color); 
+            font-weight: 700; 
+        }
+
+        /* Garis bawah untuk menu aktif */
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* --- 4. DIAGRAM SECTION --- */
+        .main-section {
+            padding: 60px 0;
+            min-height: 85vh;
+        }
+
+        .section-header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+        }
+        
+        .section-header h1 { 
+            font-size: 2.2rem; 
+            margin-bottom: 10px; 
+            color: var(--primary-color);
+        }
+        
+        .section-header p { 
+            color: var(--text-gray); 
+            max-width: 600px; 
+            margin: 0 auto; 
+        }
+
+        /* Diagram Container */
+        .diagram-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            
+            /* Agar bisa discroll horizontal di HP tanpa merusak koordinat map */
+            overflow-x: auto; 
+            text-align: center;
+        }
+
+        /* Image Styling */
+        #diagram {
+            /* PENTING: Jangan gunakan max-width: 100% agar koordinat map tidak meleset */
+            display: inline-block;
+            max-width: none; 
+            border-radius: 10px;
+        }
+
+        /* Custom Tooltip Style */
+        #tooltip {
+            position: fixed; /* Fixed agar mengikuti viewport dengan mulus */
+            display: none;
+            background: rgba(30, 27, 75, 0.95); /* Dark blue background */
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            pointer-events: none; /* Agar mouse tidak "tersangkut" di tooltip */
+            z-index: 9999;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            transform: translate(15px, 15px); /* Jarak dari kursor mouse */
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        /* --- 5. FOOTER --- */
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .social-icons { margin-bottom: 20px; }
+        .social-icons a {
+            color: white; font-size: 1.2rem; margin: 0 10px; opacity: 0.8; transition: 0.3s;
+        }
+        .social-icons a:hover { opacity: 1; transform: scale(1.1); }
+
+        /* Responsive Hint */
+        .scroll-hint {
+            display: none;
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .section-header h1 { font-size: 1.8rem; }
+            .diagram-card { padding: 15px; }
+            .scroll-hint { display: block; }
+        }
+        
+        .fade-in { animation: fadeIn 0.8s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ===== Navbar ===== -->
-<header class="navbar">
-    <div class="logo">
-        <span class="logo-box"></span>
-        <h2>Sistem Pakar<br><span>Diagnosa Kerusakan Komputer</span></h2>
-    </div>
+    <!-- NAVBAR -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fa-solid fa-tooth"></i>
+                    <span>SistemPakar.</span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="diagnosa.html">Diagnosa</a>
+                    <a href="diagram-tree.html">Diagram Tree</a>
+                    <a href="about.html">About</a>
+                    <a href="implikasi.html">Implikasi</a>
+                </div>
+            </nav>
+        </div>
+    </header>
 
-    <nav>
-          <a href="index.html"class="active">Home</a>
-        <a href="diagnosa.html" class="active">Dignosa</a>
-        <a href="about.html" class="active">About</a>
-        <a href="diagram-tree.html"class="active">Diagram Tree</a>
-        <a href="#">Implikasi</a>
+    <!-- MAIN CONTENT -->
+    <main class="container main-section fade-in">
         
-    </nav>
+        <div class="section-header">
+            <h1>Diagram Tree Diagnosa</h1>
+            <p>Peta visual alur pelacakan dari gejala menuju kesimpulan penyakit. <br>Arahkan kursor pada node (lingkaran) untuk melihat detailnya.</p>
+        </div>
 
-    <div class="social">
-        <a href="#">f</a>
-        <a href="#">x</a>
-        <a href="#">ig</a>
-    </div>
+        <div class="diagram-card">
+            <!-- Gambar Diagram -->
+            <img src="assets/dtree.png" usemap="#image-map" id="diagram" alt="Diagram Tree Penyakit Mulut">
+            
+            <!-- Hint untuk Mobile -->
+            <div class="scroll-hint">
+                <i class="fa-solid fa-arrows-left-right"></i> Geser gambar ke kanan/kiri untuk melihat detail
+            </div>
 
-   
-</header>
-<!-- ===== PARTNERS ===== -->
-<section class="partners">
-    <h2>DIAGRAM TREE</h2>
+            <!-- Tooltip Element -->
+            <div id="tooltip"></div>
 
-   
+            <!-- Image Map Data -->
+            <map name="image-map">
+                <!-- Gejala -->
+                <area shape="circle" coords="586,51,28" onmouseover="showTip('G01 - Bau mulut')" onmouseout="hideTip()">
+                <area shape="circle" coords="922,157,28" onmouseover="showTip('G02 - Gusi bengkak, Merah, dan Berdarah')" onmouseout="hideTip()">
+                <area shape="circle" coords="1041,239,27" onmouseover="showTip('G03 - Gingival berkaratin, gaung luka diantara gigi dan gusi')" onmouseout="hideTip()">
+                <area shape="circle" coords="936,336,27" onmouseover="showTip('G04 - Pembesaran limfoid di kepala, leher, atau rahang')" onmouseout="hideTip()">
+                <area shape="circle" coords="1151,317,26" onmouseover="showTip('G05 - Demam')" onmouseout="hideTip()">
+                <area shape="circle" coords="832,259,29" onmouseover="showTip('G06 - Nyeri Gusi')" onmouseout="hideTip()">
+                <area shape="circle" coords="348,104,27" onmouseover="showTip('G07 - Sakit Gigi')" onmouseout="hideTip()">
+                <area shape="circle" coords="1087,414,28" onmouseover="showTip('G08 - Nyeri ringan hingga tajam saat mengonsumsi makanan manis')" onmouseout="hideTip()">
+                <area shape="circle" coords="414,296,26" onmouseover="showTip('G09 - Noda berwarna cokelat, hitam atau putih pada permukaan gigi')" onmouseout="hideTip()">
+                <area shape="circle" coords="322,206,29" onmouseover="showTip('G10 - Nyeri saat menggigit makanan')" onmouseout="hideTip()">
+                <area shape="circle" coords="264,305,29" onmouseover="showTip('G11 - Gusi berdarah dan kemerahan')" onmouseout="hideTip()">
+                <area shape="circle" coords="704,122,27" onmouseover="showTip('G12 - Gusi membengkak')" onmouseout="hideTip()">
+                <area shape="circle" coords="651,200,29" onmouseover="showTip('G13 - Gusi melorot atau gigi tampak menjadi panjang')" onmouseout="hideTip()">
+                <area shape="circle" coords="573,284,26" onmouseover="showTip('G14 - Gigi goyang dan sensitive')" onmouseout="hideTip()">
+                <area shape="circle" coords="183,149,27" onmouseover="showTip('G15 - Gigi menjadi meregang (timbul celah-celah diantara gigi)')" onmouseout="hideTip()">
+                
+                <!-- Penyakit -->
+                <area shape="circle" coords="864,442,28" onmouseover="showTip('P01 - Gingivitis (Radang gusi)')" onmouseout="hideTip()">
+                <area shape="circle" coords="359,399,26" onmouseover="showTip('P02 - Karies Gigi (gigi berlubang)')" onmouseout="hideTip()">
+                <area shape="circle" coords="524,378,27" onmouseover="showTip('P03 - Karang Gigi')" onmouseout="hideTip()">
+                <area shape="circle" coords="174,403,27" onmouseover="showTip('P04 - Stomatitis')" onmouseout="hideTip()">
+                <area shape="circle" coords="756,385,30" onmouseover="showTip('P05 - Abses Periodental')" onmouseout="hideTip()">
+                <area shape="circle" coords="85,197,27" onmouseover="showTip('P06 - Candidas Oral')" onmouseout="hideTip()">
+                <area shape="circle" coords="1024,516,29" onmouseover="showTip('P07 - Trench Mouth')" onmouseout="hideTip()">
+            </map>
+        </div>
 
-</div>
+    </main>
 
-</section>
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="social-icons">
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-github"></i></a>
+            </div>
+            <p>&copy; <span id="year"></span> Kelompok Creative. Sistem Pakar Diagnosa Penyakit Mulut.</p>
+        </div>
+    </footer>
 
-<!-- ===== DIAGRAM TREE ===== -->
-<img src="assets/dtree.png" usemap="#image-map" id="diagram">
+    <!-- JAVASCRIPT -->
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-<div id="tooltip"></div>
+        // --- TOOLTIP LOGIC ---
+        const tooltip = document.getElementById("tooltip");
 
-<map name="image-map">
-  <area 
-    shape="circle"
-    coords="586,51,28"
-    onmouseover="showTip('G01 - Bau mulut')"
-    onmouseout="hideTip()">
-  <area 
-    shape="circle"
-    coords="922,157,28"
-    onmouseover="showTip('G02 - Gusi bengkak, Merah, dan Berdarah')"
-    onmouseout="hideTip()">
-  <area 
-   shape="circle"
-    coords="1041,239,27"
-    onmouseover="showTip('G03 - Gingival berkaratin, gaung luka diantara gigi dan gusi')"
-   onmouseout="hideTip()">
-   <area 
-    shape="circle"
-    coords="936,336,27"
-    onmouseover="showTip('G04 - Pembesaran limfoid di kepala, leher, atau rahang')"
-    onmouseout="hideTip()">
-  <area 
-    shape="circle"
-    coords="1151,317,26"
-    onmouseover="showTip('G05 - Demam')"
-    onmouseout="hideTip()">
-<area 
-    shape="circle"
-    coords="832,259,29"
-    onmouseover="showTip('G06 - Nyeri Gusi')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="348,104,27"
-    onmouseover="showTip('G07 - Sakit Gigi')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="1087,414,28"
-    onmouseover="showTip('G08 - Nyeri ringan hingga tajam saat mengonsumsi makanan manis,')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="414,296,26"
-    onmouseover="showTip('G09 - Noda berwarna cokelat, hitam atau putih pada permukaan gigi')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="322,206,29"
-    onmouseover="showTip('G10 - Nyeri saat menggigit makanan')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="264,305,29"
-    onmouseover="showTip('G11 - Gusi berdarah dan kemerahan')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="704,122,27"
-    onmouseover="showTip('G12 - Gusi membengkak')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="651,200,29"
-    onmouseover="showTip('G13 - Gusi melorot atau gigi tampak menjadi panjang')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="573,284,26"
-    onmouseover="showTip('G14 - Gigi goyang dan sensitive')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="183,149,27"
-    onmouseover="showTip('G15 - Gigi menjadi meregang (timbul celah-celah diantara gigi)')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="864,442,28"
-    onmouseover="showTip('P01 - Gingivitis (Radang gusi)')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="359,399,26"
-    onmouseover="showTip('P02 - Karies Gigi (gigi berlubang)')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="524,378,27"
-    onmouseover="showTip('P03 - Karang Gigi')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="174,403,27"
-    onmouseover="showTip('P04 - Stomatitis')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="756,385,30"
-    onmouseover="showTip('P05 - Abses Periodental')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="85,197,27"
-    onmouseover="showTip('P06 - Candidas Oral')"
-    onmouseout="hideTip()">
-    <area 
-    shape="circle"
-    coords="1024,516,29"
-    onmouseover="showTip('P07 - Trench Mouth')"
-    onmouseout="hideTip()">
-    
-    
-</map>
+        function showTip(text) {
+            tooltip.innerText = text;
+            tooltip.style.display = "block";
+        }
 
-<!-- ===== JAVASCRIPT (TARUH DI SINI) ===== -->
-<script>
-const tooltip = document.getElementById("tooltip");
+        function hideTip() {
+            tooltip.style.display = "none";
+        }
 
-function showTip(text) {
-  tooltip.innerText = text;
-  tooltip.style.display = "block";
-}
+        // Logic agar tooltip mengikuti mouse dengan presisi
+        document.addEventListener("mousemove", function(e) {
+            // Menggunakan clientX/Y untuk posisi relatif terhadap viewport browser
+            // Ditambah offset 15px agar tidak tertutup kursor
+            tooltip.style.left = (e.clientX + 15) + "px";
+            tooltip.style.top = (e.clientY + 15) + "px";
+        });
 
-document.addEventListener("mousemove", function(e) {
-  tooltip.style.left = e.pageX + 15 + "px";
-  tooltip.style.top = e.pageY + 15 + "px";
-});
+        // --- SCRIPT OTOMATIS ACTIVE LINK (NAVIGASI) ---
+        // Script ini mendeteksi nama file di URL dan memberi warna pada menu yang sesuai
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ambil nama file saat ini (misal: diagram-tree.html)
+            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-links a');
 
-function hideTip() {
-  tooltip.style.display = "none";
-}
-</script>
+            navLinks.forEach(link => {
+                // Hapus kelas 'active' dari semua link
+                link.classList.remove('active');
+                
+                // Ambil target link (href)
+                const linkHref = link.getAttribute('href');
+                
+                // Jika href sama dengan file yang sedang dibuka, tambahkan kelas active
+                if (linkHref === currentPath) {
+                    link.classList.add('active');
+                } 
+            });
+        });
+    </script>
 
 </body>
 </html>
