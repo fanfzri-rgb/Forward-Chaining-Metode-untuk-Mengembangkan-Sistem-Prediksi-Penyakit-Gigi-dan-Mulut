@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implikasi Sistem | Sistem Pakar</title>
+    
+    <!-- Mengambil Font Modern dari Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Mengambil Icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* CSS Variables - Sama seperti halaman lain untuk konsistensi */
+        :root {
+            --primary-color: #4F46E5;
+            --secondary-color: #1E1B4B;
+            --accent-color: #818CF8;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-gray: #64748B;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; color: var(--secondary-color); }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* HEADER */
+        header {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links { display: flex; gap: 25px; }
+
+        /* Menu normal (abu-abu) */
+        .nav-links a { 
+            font-weight: 500; 
+            font-size: 0.95rem; 
+            color: #9CA3AF; /* Abu-abu untuk menu tidak aktif */
+            text-decoration: none; 
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover effect */
+        .nav-links a:hover { 
+            color: var(--primary-color); 
+        }
+        
+        /* Menu yang aktif (highlight berwarna) */
+        .nav-links a.active { 
+            color: var(--primary-color); 
+            font-weight: 700; 
+        }
+
+        /* Garis bawah untuk menu aktif */
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* HERO SECTION */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #eef2ff 100%);
+            margin-bottom: 40px;
+        }
+
+        .hero h1 { font-size: 2.5rem; margin-bottom: 15px; color: var(--primary-color); }
+        .hero p { color: var(--text-gray); max-width: 700px; margin: 0 auto; }
+
+        /* CONTENT SECTIONS */
+        .content-section { padding: 40px 0; }
+        .section-title { text-align: center; margin-bottom: 40px; font-size: 1.8rem; }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary-color);
+            transition: transform 0.3s;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+
+        .card h3 { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .card i { color: var(--primary-color); font-size: 1.5rem; }
+        .card ul { list-style-position: inside; color: var(--text-gray); }
+        .card li { margin-bottom: 8px; }
+
+        /* DISCLAIMER BOX */
+        .disclaimer-box {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 50px;
+            text-align: center;
+            color: #991B1B;
+        }
+        
+        .disclaimer-box i { font-size: 2rem; margin-bottom: 15px; color: #EF4444; }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+        }
+        
+        .fade-in { animation: fadeIn 0.8s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fa-solid fa-tooth"></i>
+                    <span>SistemPakar.</span>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="diagnosa.html">Diagnosa</a>
+                    <a href="diagram-tree.html">Diagram Tree</a>
+                    <a href="about.html">About</a>
+                    <a href="implikasi.html" class="active">Implikasi</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container fade-in">
+        
+        <section class="hero">
+            <h1>Implikasi & Manfaat Sistem</h1>
+            <p>
+                Analisis dampak penerapan sistem pakar diagnosa penyakit gigi dan mulut terhadap pengguna (masyarakat) dan pengembangan ilmu pengetahuan.
+            </p>
+        </section>
+
+        <!-- GRID KONTEN -->
+        <section class="content-section">
+            <div class="grid-cards">
+                
+                <!-- Implikasi Praktis -->
+                <div class="card">
+                    <h3><i class="fa-solid fa-users"></i> Implikasi Praktis</h3>
+                    <p style="margin-bottom: 15px; color: var(--text-gray);">
+                        Manfaat langsung yang dirasakan oleh pengguna sistem (masyarakat umum):
+                    </p>
+                    <ul>
+                        <li><strong>Deteksi Dini:</strong> Membantu pengguna mengenali gejala penyakit mulut lebih awal sebelum parah.</li>
+                        <li><strong>Efisiensi Waktu & Biaya:</strong> Konsultasi awal gratis tanpa perlu antre di klinik.</li>
+                        <li><strong>Edukasi Kesehatan:</strong> Meningkatkan kesadaran masyarakat akan pentingnya kesehatan gigi.</li>
+                    </ul>
+                </div>
+
+                <!-- Implikasi Teoritis -->
+                <div class="card">
+                    <h3><i class="fa-solid fa-book-open"></i> Implikasi Teoritis</h3>
+                    <p style="margin-bottom: 15px; color: var(--text-gray);">
+                        Kontribusi terhadap pengembangan ilmu pengetahuan dan teknologi:
+                    </p>
+                    <ul>
+                        <li><strong>Metode Forward Chaining:</strong> Membuktikan efektivitas algoritma berbasis aturan (rule-based) dalam diagnosa medis sederhana.</li>
+                        <li><strong>Basis Pengetahuan:</strong> Menyusun struktur data gejala dan penyakit yang sistematis untuk referensi penelitian selanjutnya.</li>
+                        <li><strong>Integrasi Web:</strong> Implementasi sistem pakar dalam platform web yang responsif.</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="disclaimer-box">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h2>PENTING: Disclaimer Medis</h2>
+                <p>
+                    Sistem ini dikembangkan sebagai alat bantu diagnosa awal berdasarkan algoritma komputer. 
+                    <strong>Hasil diagnosa sistem ini TIDAK menggantikan saran, diagnosa, atau perawatan dari Dokter Gigi profesional.</strong>
+                </p>
+                <p style="margin-top: 10px;">
+                    Jika Anda mengalami gejala yang mengganggu atau hasil diagnosa menunjukkan kondisi serius, segera kunjungi fasilitas kesehatan terdekat.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="year"></span> Kelompok Creative. Sistem Pakar Diagnosa Penyakit Mulut.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tahun Otomatis
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Animasi Scroll Fade-In
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // === FITUR HIGHLIGHT MENU NAVBAR ===
+        // Ambil semua link di navbar
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                // Hapus class 'active' dari semua link
+                navLinks.forEach(l => l.classList.remove('active'));
+                
+                // Tambah class 'active' ke link yang diklik
+                this.classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
